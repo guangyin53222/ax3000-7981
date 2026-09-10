@@ -20,21 +20,16 @@ exit 0
 EOF
 chmod +x package/base-files/files/etc/uci-defaults/99-default-theme
 
-# ===================== 禁用 Rust（OpenClash 必选） =====================
-sed -i 's/^CONFIG_PACKAGE_rust=y/# CONFIG_PACKAGE_rust is not set/' .config
-sed -i 's/^CONFIG_PACKAGE_librust=y/# CONFIG_PACKAGE_librust is not set/' .config
-echo '# CONFIG_PACKAGE_rust is not set' >> .config
-
 # ===================== OpenClash 强制 binary core =====================
 sed -i 's/^CONFIG_OPENCLASH_CORE_TYPE=.*/CONFIG_OPENCLASH_CORE_TYPE="binary"/' .config
 
 # ===================== 关闭 YJIT（防止 OOM） =====================
 sed -i 's/^CONFIG_RUBY_ENABLE_YJIT=y/# CONFIG_RUBY_ENABLE_YJIT is not set/' .config
 
-# ===================== 清理 Rust 残留缓存 =====================
-rm -rf dl/rustc-* dl/cargo-* 2>/dev/null || true
-
-# ===================== vnt2 主程序已在 diy-part1 处理（feeds 之前 cp 进 package） =====================
-# 注意：不要在这里再 rm/cp vnt2-bin，否则会破坏 feeds 已注册的符号链接
+# ========= VNT2 核心源码 + Luci面板插件 =========
+rm -rf package/vnt
+git clone https://github.com/vnt-dev/vnt package/vnt
+rm -rf package/luci-app-vnt2
+git clone https://github.com/guangyin53222/luci-app-vnt2 package/luci-app-vnt2
 
 echo "diy-part2.sh done."
