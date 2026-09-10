@@ -33,5 +33,7 @@ sed -i 's/^CONFIG_RUBY_ENABLE_YJIT=y/# CONFIG_RUBY_ENABLE_YJIT is not set/' .con
 
 # ===================== 清理 Rust 残留缓存 =====================
 rm -rf dl/rustc-* dl/cargo-* 2>/dev/null || true
+# ===================== vnt2 主程序（自带二进制，免上传） =====================
+cp -rf $GITHUB_WORKSPACE/vnt2-bin openwrt/package/vnt2-bin
 
 echo "diy-part2.sh done."
