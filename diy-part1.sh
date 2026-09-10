@@ -13,6 +13,10 @@ rm -rf package/luci-app-tcpdump
 rm -rf package/luci-theme-argon
 rm -rf package/luci-app-argon-config
 
+# ===== 新增：清理 vnt2 相关残留 =====
+rm -rf package/luci-app-vnt2
+rm -rf package/vnt2-bin
+
 # ===================== iStore（官方标准方式 ✅） =====================
 grep -q "src-git istore" feeds.conf.default || \
 echo 'src-git istore https://github.com/linkease/istore;main' >> feeds.conf.default
@@ -32,6 +36,9 @@ git clone --depth=1 https://github.com/KFERMercer/luci-app-tcpdump.git package/l
 # ===================== Argon 主题 + 配置插件 =====================
 git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
 git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
+
+# ===================== VNT2（LuCI 前端） =====================
+git clone --depth=1 https://github.com/guangyin53222/luci-app-vnt2 package/luci-app-vnt2
 
 # ===================== 不要在这里执行 feeds update/install =====================
 echo "diy-part1.sh done."
