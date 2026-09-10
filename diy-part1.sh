@@ -1,12 +1,37 @@
 #!/bin/bash
 #
-# Description: OpenWrt DIY script part 2 (After Update feeds)
+# Description: OpenWrt DIY script part 1 (Before Update feeds)
+# Target: immortalwrt-mt798x-rebase @ 25.12
 #
 
-# ========= VNT2 核心源码 + Luci面板插件 =========
-rm -rf package/vnt
-git clone https://github.com/vnt-dev/vnt package/vnt
-rm -rf package/luci-app-vnt2
-git clone https://github.com/guangyin53222/luci-app-vnt2 package/luci-app-vnt2
+# ===================== 清理旧残留 =====================
+rm -rf package/OpenAppFilter
+rm -rf package/luci-app-store
+rm -rf package/luci-app-gecoosac
+rm -rf package/luci-app-harbor-file
+rm -rf package/luci-app-tcpdump
+rm -rf package/luci-theme-argon
+rm -rf package/luci-app-argon-config
 
-echo "diy-part2.sh done."
+# ===================== iStore（官方标准方式 ✅） =====================
+grep -q "src-git istore" feeds.conf.default || \
+echo 'src-git istore https://github.com/linkease/istore;main' >> feeds.conf.default
+
+# ===================== OpenAppFilter（仅 luci，不编内核） =====================
+git clone --depth=1 https://github.com/destan19/OpenAppFilter package/OpenAppFilter
+
+# ===================== Harbor File（文件管理器） =====================
+git clone --depth=1 https://github.com/destan19/luci-app-harbor-file package/luci-app-harbor-file
+
+# ===================== Gecoos AC（集客 AC） =====================
+git clone --depth=1 https://github.com/laipeng668/luci-app-gecoosac package/luci-app-gecoosac
+
+# ===================== tcpdump（抓包插件） =====================
+git clone --depth=1 https://github.com/KFERMercer/luci-app-tcpdump.git package/luci-app-tcpdump
+
+# ===================== Argon 主题 + 配置插件 =====================
+git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
+git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
+
+
+echo "diy-part1.sh done."
