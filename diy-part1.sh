@@ -37,12 +37,13 @@ git clone --depth=1 https://github.com/KFERMercer/luci-app-tcpdump.git package/l
 git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
 git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
 
-# ===================== VNT2（LuCI 前端） =====================
-git clone --depth=1 https://github.com/guangyin53222/luci-app-vnt2 package/luci-app-vnt2
+# 拉取VNT核心源码 vnt-dev/vnt
+rm -rf package/vnt
+git clone https://github.com/vnt-dev/vnt package/vnt
+# VNT2 luci面板插件
+rm -rf package/luci-app-vnt2
+git clone https://github.com/guangyin53222/luci-app-vnt2 package/luci-app-vnt2
 
-# ===================== vnt2 主程序（关键：必须在 feeds 扫描之前放入 package） =====================
-rm -rf package/vnt2-bin
-cp -rf $GITHUB_WORKSPACE/vnt2-bin package/vnt2-bin
 
 # ===================== 不要在这里执行 feeds update/install =====================
 echo "diy-part1.sh done."
