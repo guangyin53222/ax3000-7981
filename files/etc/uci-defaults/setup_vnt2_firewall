@@ -1,0 +1,41 @@
+#!/bin/sh
+# ============================================================
+# setup_vnt2_firewall.sh
+# 用途：在 OpenWrt 编译时（或首次启动时）自动创建 VNT2 防火墙规则
+# 说明：本脚本通过 uci 命令还原你提供的 /etc/config/firewall 片段
+# ============================================================
+
+set -e
+
+echo "==> Configuring VNT2 firewall zone ..."
+
+# 1) 创建 VNT2 防火墙 zone
+uci set firewall.vnt2zone=zone
+uci set firewall.vnt2zone.name='VNT2'
+uci set firewall.vnt2zone.input='ACCEPT'
+uci set firewall.vnt2zone.output='ACCEPT'
+uci set firewall.vnt2zone.forward='ACCEPT'
+uci set firewall.vnt2zone.masq='1'
+uci set firewall.vnt2zone.mtu_fix='1'
+uci set firewall.vnt2zone.network='VNT2'
+
+# 2) VNT2 -> lan 转发
+uci set firewall.vnt2fwlan=forwarding
+uci set firewall.vnt2fwlan.src='VNT2'
+uci set firewall.vnt2fwlan.dest='lan'
+
+# 3) VNT2 -> wan 转发（允许 VNT2 访问外网，含 MASQUERADE）
+uci set firewall.vnt2fwwan=forwarding
+uci set firewall.vnt2fwwan.src='VNT2'
+uci set firewall.vnt2fwwan.dest='wan'
+
+# 4) lan -> VNT2 转发
+uci set firewall.lanfwvnt2=forwarding
+uci set firewall.lanfwvnt2.src='lan'
+uci set firewall.lanfwvnt2.dest='VNT2'
+
+# 5) 提交并应用
+uci commit firewall
+
+echo "==> VNT2 firewall rules applied successfully."
+echo "    (重启后生效：/etc/init.d/firewall restart)"
