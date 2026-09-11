@@ -4,8 +4,8 @@
 # Target: immortalwrt-mt798x-rebase @ 25.12
 #
 
-# ===================== 修改默认 IP → 192.168.100.1 =====================
-sed -i 's/192.168.1.1/192.168.100.1/g' package/base-files/files/bin/config_generate
+# ===================== 修改默认 IP → 192.168.66.1 =====================
+sed -i 's/192.168.1.1/192.168.66.1/g' package/base-files/files/bin/config_generate
 
 # ===================== 修改主机名 =====================
 sed -i 's/ImmortalWrt/ARWRT/g' package/base-files/files/bin/config_generate
