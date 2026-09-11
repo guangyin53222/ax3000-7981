@@ -26,10 +26,11 @@ sed -i 's/^CONFIG_OPENCLASH_CORE_TYPE=.*/CONFIG_OPENCLASH_CORE_TYPE="binary"/' .
 # ===================== 关闭 YJIT（防止 OOM） =====================
 sed -i 's/^CONFIG_RUBY_ENABLE_YJIT=y/# CONFIG_RUBY_ENABLE_YJIT is not set/' .config
 
-# ========= VNT2 核心源码 + Luci面板插件 =========
-rm -rf package/vnt
-git clone https://github.com/vnt-dev/vnt package/vnt
+# ===================== VNT2：拉取LuCI管理面板，核心二进制手动放入files =====================
 rm -rf package/luci-app-vnt2
 git clone https://github.com/guangyin53222/luci-app-vnt2 package/luci-app-vnt2
+
+# 给files内VNT二进制补齐执行权限【关键，防止windows上传丢失权限】
+chmod +x files/usr/bin/vnt2_cli files/usr/bin/vnt2_ctrl
 
 echo "diy-part2.sh done."
