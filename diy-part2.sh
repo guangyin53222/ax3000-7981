@@ -1,38 +1,38 @@
 #!/bin/bash
-#
-# Description: OpenWrt DIY script part 2 (After Update feeds)
-# Target: immortalwrt-mt798x-rebase @ 25.12
-# Device: 360 T7
-
 set -euo pipefail
 
-echo "==> Running diy-part2.sh ..."
+echo "==> diy-part2.sh: pull extra packages"
 
-# --------------------------
-# 默认主题
-# --------------------------
-DEFAULT_THEME="footstrap"
+cd "$(dirname "$0")" || exit 1
 
-if [[ "${DEFAULT_THEME}" == "footstrap" ]]; then
-  echo "==> Set default theme: footstrap"
-  sed -i 's/luci-theme-bootstrap/luci-theme-footstrap/g' feeds/luci/collections/luci/Makefile
-else
-  echo "==> Set default theme: argon"
-  sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
+if [ -d "$GITHUB_WORKSPACE/files" ]; then
+  cp -r "$GITHUB_WORKSPACE/files" ./
 fi
 
-# --------------------------
-# 修改主机名 & LAN IP
-# --------------------------
-sed -i 's/OpenWrt/aRwrt/g' package/base-files/files/bin/config_generate
-sed -i 's/192.168.1.1/192.168.100.1/g' package/base-files/files/bin/config_generate
+# Hostname
+sed -i 's/OpenWrt/OpenWrt-T7/g' ./package/base-files/files/etc/hostname
 
-# --------------------------
-# Vantage：移除对 vantage theme 的硬依赖
-# --------------------------
-if [ -f package/luci-app-vantage/Makefile ]; then
-  echo "==> Patch vantage remove theme dependency"
-  sed -i '/luci-theme-vantage/d' package/luci-app-vantage/Makefile
-fi
+# LAN IP
+sed -i 's/192.168.1.1/192.168.100.1/g' ./package/base-files/files/bin/config_generate
 
-echo "✅ diy-part2.sh finished."
+# 集客 AC
+rm -rf package/openwrt-gecoosac
+git clone --depth=1 https://github.com/lwb1978/openwrt-gecoosac package/openwrt-gecoosac
+
+# rtp2httpd
+rm -rf package/rtp2httpd
+git clone --depth=1 https://github.com/stackia/rtp2httpd package/rtp2httpd
+
+# vantage
+rm -rf package/luci-app-vantage
+git clone --depth=1 https://github.com/sirpdboy/luci-app-vantage package/luci-app-vantage
+
+# store
+rm -rf package/luci-app-store
+git clone --depth=1 https://github.com/kenzok8/luci-app-store package/luci-app-store
+
+# openclash
+rm -rf package/luci-app-openclash
+git clone --depth=1 https://github.com/vernesong/OpenClash package/luci-app-openclash
+
+echo "==> done"
