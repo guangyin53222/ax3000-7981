@@ -4,26 +4,37 @@
 # Target: immortalwrt-mt798x-rebase @ 25.12
 #
 
-# ===================== 修改默认 IP → 192.168.100.1 =====================
+set -euo pipefail
+
+echo "==> Running diy-part2.sh ..."
+
+# --------------------------
+# 设置默认主题
+# --------------------------
+DEFAULT_THEME="footstrap"
+
+if [[ "${DEFAULT_THEME}" == "footstrap" ]]; then
+  echo "==> Set default theme: footstrap"
+  sed -i 's/luci-theme-bootstrap/luci-theme-footstrap/g' feeds/luci/collections/luci/Makefile
+else
+  echo "==> Set default theme: argon"
+  sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
+fi
+
+# --------------------------
+# 预置一些常用配置（可选）
+# --------------------------
+# 修改主机名
+sed -i 's/OpenWrt/360T7/g' package/base-files/files/bin/config_generate
+
+# 修改默认 LAN IP（按需）
 sed -i 's/192.168.1.1/192.168.100.1/g' package/base-files/files/bin/config_generate
 
-# ===================== 修改主机名 =====================
-sed -i 's/ImmortalWrt/ARWRT/g' package/base-files/files/bin/config_generate
+# --------------------------
+# 清理 / 补丁（按需）
+# --------------------------
+# 如果后续需要给插件打补丁、修改 Makefile，放这里
+# example:
+# sed -i ...
 
-# ===================== 默认主题：Argon =====================
-mkdir -p package/base-files/files/etc/uci-defaults
-cat << 'EOF' > package/base-files/files/etc/uci-defaults/99-default-theme
-#!/bin/sh
-uci set luci.main.mediaurlbase='/luci-static/argon'
-uci commit luci
-exit 0
-EOF
-chmod +x package/base-files/files/etc/uci-defaults/99-default-theme
-
-# ===================== OpenClash 强制 binary core =====================
-sed -i 's/^CONFIG_OPENCLASH_CORE_TYPE=.*/CONFIG_OPENCLASH_CORE_TYPE="binary"/' .config
-
-# ===================== 关闭 YJIT（防止 OOM） =====================
-sed -i 's/^CONFIG_RUBY_ENABLE_YJIT=y/# CONFIG_RUBY_ENABLE_YJIT is not set/' .config
-
-echo "diy-part2.sh done."
+echo "✅ diy-part2.sh finished."
