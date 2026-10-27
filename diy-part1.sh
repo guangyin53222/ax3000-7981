@@ -4,34 +4,71 @@
 # Target: immortalwrt-mt798x-rebase @ 25.12
 #
 
+set -euo pipefail
+
+# ===================== 开关配置 =====================
+ADD_ISTORE="true"
+ADD_OPENAPPFILTER="true"
+ADD_HARBOR_FILE="true"
+ADD_GECOOSAC="true"
+ADD_TCPDUMP="true"
+ADD_ARGON="false"          # false = 使用 Footstrap
+ADD_FOOTSTRAP="true"
+
 # ===================== 清理旧残留 =====================
-rm -rf package/OpenAppFilter
-rm -rf package/luci-app-store
-rm -rf package/luci-app-gecoosac
-rm -rf package/luci-app-harbor-file
-rm -rf package/luci-app-tcpdump
-rm -rf package/luci-theme-argon
-rm -rf package/luci-app-argon-config
+echo "==> Cleaning old packages ..."
+rm -rf \
+  package/OpenAppFilter \
+  package/luci-app-store \
+  package/luci-app-gecoosac \
+  package/luci-app-harbor-file \
+  package/luci-app-tcpdump \
+  package/luci-theme-argon \
+  package/luci-app-argon-config \
+  package/luci-theme-footstrap
 
-# ===================== iStore（官方标准方式 ✅） =====================
-grep -q "src-git istore" feeds.conf.default || \
-echo 'src-git istore https://github.com/linkease/istore;main' >> feeds.conf.default
+# ===================== iStore =====================
+if [[ "${ADD_ISTORE}" == "true" ]]; then
+  echo "==> Adding iStore feed ..."
+  grep -q "^src-git istore" feeds.conf.default ||
+    echo 'src-git istore https://github.com/linkease/istore;main' >> feeds.conf.default
+fi
 
-# ===================== OpenAppFilter（仅 luci，不编内核） =====================
-git clone --depth=1 https://github.com/destan19/OpenAppFilter package/OpenAppFilter
+# ===================== OpenAppFilter =====================
+if [[ "${ADD_OPENAPPFILTER}" == "true" ]]; then
+  echo "==> Cloning OpenAppFilter ..."
+  git clone --depth=1 https://github.com/destan19/OpenAppFilter package/OpenAppFilter
+fi
 
-# ===================== Harbor File（文件管理器） =====================
-git clone --depth=1 https://github.com/destan19/luci-app-harbor-file package/luci-app-harbor-file
+# ===================== Harbor File =====================
+if [[ "${ADD_HARBOR_FILE}" == "true" ]]; then
+  echo "==> Cloning Harbor File ..."
+  git clone --depth=1 https://github.com/destan19/luci-app-harbor-file package/luci-app-harbor-file
+fi
 
-# ===================== Gecoos AC（集客 AC） =====================
-git clone --depth=1 https://github.com/laipeng668/luci-app-gecoosac package/luci-app-gecoosac
+# ===================== Gecoos AC =====================
+if [[ "${ADD_GECOOSAC}" == "true" ]]; then
+  echo "==> Cloning Gecoos AC ..."
+  git clone --depth=1 https://github.com/laipeng668/luci-app-gecoosac package/luci-app-gecoosac
+fi
 
-# ===================== tcpdump（抓包插件） =====================
-git clone --depth=1 https://github.com/KFERMercer/luci-app-tcpdump.git package/luci-app-tcpdump
+# ===================== luci-app-tcpdump =====================
+if [[ "${ADD_TCPDUMP}" == "true" ]]; then
+  echo "==> Cloning luci-app-tcpdump ..."
+  git clone --depth=1 https://github.com/KFERMercer/luci-app-tcpdump.git package/luci-app-tcpdump
+fi
 
-# ===================== Argon 主题 + 配置插件 =====================
-git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
-git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
+# ===================== Footstrap（默认） =====================
+if [[ "${ADD_FOOTSTRAP}" == "true" ]]; then
+  echo "==> Cloning Footstrap theme ..."
+  git clone --depth=1 https://github.com/VizzleTF/luci-theme-footstrap package/luci-theme-footstrap
+fi
 
+# ===================== Argon（可选） =====================
+if [[ "${ADD_ARGON}" == "true" ]]; then
+  echo "==> Cloning Argon theme ..."
+  git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
+  git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
+fi
 
-echo "diy-part1.sh done."
+echo "✅ diy-part1.sh finished."
