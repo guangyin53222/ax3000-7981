@@ -10,7 +10,7 @@ if [ -d "$GITHUB_WORKSPACE/files" ]; then
 fi
 
 # hostname
-sed -i 's/OpenWrt/OpenWrt-T7/g' ./package/base-files/files/etc/hostname
+sed -i 's/OpenWrt/aRwrt/g' ./package/base-files/files/etc/hostname
 
 # 默认 LAN
 sed -i 's/192.168.1.1/192.168.100.1/g' ./package/base-files/files/bin/config_generate
