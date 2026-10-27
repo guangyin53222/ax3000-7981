@@ -2,7 +2,7 @@
 #
 # Description: OpenWrt DIY script part 1 (Before Update feeds)
 # Target: immortalwrt-mt798x-rebase @ 25.12
-#
+# Device: 360 T7
 
 set -euo pipefail
 
@@ -14,6 +14,7 @@ ADD_GECOOSAC="true"
 ADD_TCPDUMP="true"
 ADD_ARGON="false"          # false = 使用 Footstrap
 ADD_FOOTSTRAP="true"
+ADD_VANTAGE="true"
 
 # ===================== 清理旧残留 =====================
 echo "==> Cleaning old packages ..."
@@ -25,7 +26,8 @@ rm -rf \
   package/luci-app-tcpdump \
   package/luci-theme-argon \
   package/luci-app-argon-config \
-  package/luci-theme-footstrap
+  package/luci-theme-footstrap \
+  package/luci-app-vantage
 
 # ===================== iStore =====================
 if [[ "${ADD_ISTORE}" == "true" ]]; then
@@ -58,7 +60,7 @@ if [[ "${ADD_TCPDUMP}" == "true" ]]; then
   git clone --depth=1 https://github.com/KFERMercer/luci-app-tcpdump.git package/luci-app-tcpdump
 fi
 
-# ===================== Footstrap（默认） =====================
+# ===================== Footstrap（默认主题） =====================
 if [[ "${ADD_FOOTSTRAP}" == "true" ]]; then
   echo "==> Cloning Footstrap theme ..."
   git clone --depth=1 https://github.com/VizzleTF/luci-theme-footstrap package/luci-theme-footstrap
@@ -69,6 +71,14 @@ if [[ "${ADD_ARGON}" == "true" ]]; then
   echo "==> Cloning Argon theme ..."
   git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
   git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
+fi
+
+# ===================== Vantage（仪表盘，不带主题） =====================
+if [[ "${ADD_VANTAGE}" == "true" ]]; then
+  echo "==> Fetch luci-app-vantage ..."
+  git clone --depth=1 https://github.com/anothaDev/luci-theme-vantage tmp-vantage
+  mv tmp-vantage/luci-app-vantage package/luci-app-vantage
+  rm -rf tmp-vantage
 fi
 
 echo "✅ diy-part1.sh finished."
