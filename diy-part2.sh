@@ -2,14 +2,14 @@
 #
 # Description: OpenWrt DIY script part 2 (After Update feeds)
 # Target: immortalwrt-mt798x-rebase @ 25.12
-#
+# Device: 360 T7
 
 set -euo pipefail
 
 echo "==> Running diy-part2.sh ..."
 
 # --------------------------
-# 设置默认主题
+# 默认主题
 # --------------------------
 DEFAULT_THEME="footstrap"
 
@@ -22,19 +22,17 @@ else
 fi
 
 # --------------------------
-# 预置一些常用配置（可选）
+# 修改主机名 & LAN IP
 # --------------------------
-# 修改主机名
-sed -i 's/OpenWrt/360T7/g' package/base-files/files/bin/config_generate
-
-# 修改默认 LAN IP（按需）
+sed -i 's/OpenWrt/aRwrt/g' package/base-files/files/bin/config_generate
 sed -i 's/192.168.1.1/192.168.100.1/g' package/base-files/files/bin/config_generate
 
 # --------------------------
-# 清理 / 补丁（按需）
+# Vantage：移除对 vantage theme 的硬依赖
 # --------------------------
-# 如果后续需要给插件打补丁、修改 Makefile，放这里
-# example:
-# sed -i ...
+if [ -f package/luci-app-vantage/Makefile ]; then
+  echo "==> Patch vantage remove theme dependency"
+  sed -i '/luci-theme-vantage/d' package/luci-app-vantage/Makefile
+fi
 
 echo "✅ diy-part2.sh finished."
